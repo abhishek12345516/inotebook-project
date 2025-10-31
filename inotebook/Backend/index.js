@@ -1,18 +1,23 @@
-const express = require('express');
-const connectToMongo = require('./db');
-const cors = require('cors');
+// backend/index.js
+require("dotenv").config(); // ✅ ye sabse upar likhna zaroori hai
+
+const express = require("express");
+const connectToMongo = require("./db");
+const cors = require("cors");
+
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-const port = 5000;
-
-connectToMongo();
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/notes', require('./routes/notes'));
+// ✅ Database connect karo
+connectToMongo();
 
-app.listen(port, () => {
-  console.log(`iNotebook backend listening at http://localhost:${port}`);
+// ✅ Routes import
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/notes", require("./routes/notes"));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

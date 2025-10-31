@@ -41,32 +41,39 @@ const Signup = ({ onSignup, showAlert }) => {
     setError("");
     setLoading(true);
 
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/createuser", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
+   try {
+  const response = await fetch("http://localhost:5000/api/auth/createuser", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: credentials.name,
+      email: credentials.email,
+      password: credentials.password,
+    }),
+  });
 
-      const json = await response.json();
-      console.log(json);
+  let json;
+  try {
+    json = await response.json(); // 👈 safe parse
+  } catch (err) {
+    throw new Error("Invalid JSON response from server");
+  }
 
-      if (json.success) {
-        localStorage.setItem("token", json.authtoken);
-        showAlert("Signup successful!", "success");
-        navigate("/login");
-      } else {
-        showAlert(json.error || "Invalid details. Please try again.", "danger");
-      }
+  console.log("Signup Response:", json);
 
-      if (onSignup) await onSignup(credentials);
-    } catch (err) {
-      console.error(err);
-      setError("Signup failed. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (json.success) {
+    localStorage.setItem("token", json.authToken);
+    showAlert("Signup successful!", "success");
+    navigate("/login");
+  } else {
+    showAlert(json.error || "Invalid details. Please try again.", "danger");
+    setError(json.error || "Signup failed.");
+  }
+} catch (err) {
+  console.error("Signup Error:", err);
+  setError("Signup failed. Please try again later.");
+}
+  }
 
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -82,9 +89,7 @@ const Signup = ({ onSignup, showAlert }) => {
     >
       <div className="card shadow rounded-4 border-0" style={{ maxWidth: 520 }}>
         <div className="card-body p-4 p-md-5">
-          <h3 className="card-title text-center mb-3 fw-bold">
-            Create account
-          </h3>
+          <h3 className="card-title text-center mb-3 fw-bold">Create account</h3>
           <p className="text-center text-muted mb-4">
             Sign up to start saving notes securely
           </p>

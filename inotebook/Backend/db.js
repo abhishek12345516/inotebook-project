@@ -1,17 +1,28 @@
 const mongoose = require("mongoose");
+const path = require("path");
+const dotenv = require("dotenv");
 
-const mongoURI = "mongodb://127.0.0.1:27017/inotebook"; // ✅ 127.0.0.1 यूज़ करो, localhost की जगह
+// ✅ Ye line ensure karti hai ki dotenv correct file padhe
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const connectToMongo = async () => {
   try {
-    await mongoose.connect(mongoURI, {
+    console.log("📡 Connecting to MongoDB...");
+    console.log("MONGO_URI from .env:", process.env.MONGO_URI);
+
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI missing in .env file");
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    console.log("✅ Connected to MongoDB successfully");
+    console.log("✅ MongoDB connected successfully!");
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1);
   }
 };
 

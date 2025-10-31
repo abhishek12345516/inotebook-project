@@ -1,34 +1,49 @@
-// ✅ Login.js
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 
-
 const Login = (props) => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false); // ✅ renamed properly
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    let navigate = useNavigate()
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-      }),
-    });
-    const json = await response.json();
-    console.log(json);
-    if(json.success) {
-      localStorage.setItem("token", json.authtoken);
-      props.showAlert("Successfully logged in","success");
-      navigate("/");
-    }else{
-      props.showAlert("Invalid details","danger");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
+
+      const json = await response.json();
+      console.log("Login Response:", json);
+
+      if (json.success) {
+        // ✅ Correct token key name
+        localStorage.setItem("token", json.authToken);
+        props.showAlert("Successfully logged in", "success");
+        navigate("/");
+      } else {
+        setError(json.error || "Invalid email or password.");
+        props.showAlert("Invalid details", "danger");
+      }
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError("Login failed. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,13 +66,12 @@ const Login = (props) => {
             Login to your iNotebook account
           </p>
 
+          {error && <div className="alert alert-danger py-2">{error}</div>}
+
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <div className="mb-3">
-              <label
-                htmlFor="loginEmail"
-                className="form-label fw-semibold"
-              >
+              <label htmlFor="loginEmail" className="form-label fw-semibold">
                 Email
               </label>
               <input
@@ -74,17 +88,14 @@ const Login = (props) => {
 
             {/* Password */}
             <div className="mb-3">
-              <label
-                htmlFor="loginPassword"
-                className="form-label fw-semibold"
-              >
+              <label htmlFor="loginPassword" className="form-label fw-semibold">
                 Password
               </label>
               <div className="input-group">
                 <input
                   id="loginPassword"
                   name="password"
-                  type={showPassword ? "text" : "password"} // ✅ fixed variable name
+                  type={showPassword ? "text" : "password"}
                   className="form-control form-control-lg rounded-3"
                   placeholder="Enter your password"
                   value={credentials.password}
@@ -94,7 +105,7 @@ const Login = (props) => {
                 <button
                   type="button"
                   className="btn btn-outline-secondary"
-                  onClick={() => setShowPassword(!showPassword)} // ✅ fixed
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
@@ -110,8 +121,9 @@ const Login = (props) => {
                   background: "linear-gradient(135deg,#007bff,#6610f2)",
                   border: "none",
                 }}
+                disabled={loading}
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
             </div>
           </form>
