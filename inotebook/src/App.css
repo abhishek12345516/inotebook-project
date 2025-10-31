@@ -1,0 +1,71 @@
+/* 🌤️ Soft background for entire app */
+/* 🌈 Premium gradient background */
+body {
+  background: radial-gradient(
+      circle at top left,
+      rgba(255, 240, 245, 0.9),
+      rgba(240, 255, 255, 0.8),
+      rgba(230, 245, 255, 0.9)
+    ),
+    url("https://www.transparenttextures.com/patterns/cubes.png");
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  color: #222;
+  margin: 0;
+  transition: all 0.4s ease-in-out;
+}
+
+/* Card-like sections (for AddNote, Notes, etc.) */
+.card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a8c0ff, #3f2b96);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7f7fd5, #91eae4);
+}
+
+/* Optional footer background */
+footer {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+
+
+
+
+
+/* Subtle hover and smooth card transition */
+.note-card {
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Optional: custom font for notes */
+.card-title {
+  font-family: "Poppins", sans-serif;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
