@@ -18,6 +18,13 @@ connectToMongo();
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/notes", require("./routes/notes"));
 
+app.get("/", (req, res) => {
+  res.send({
+    activeStatus: true,
+    error: false
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
